@@ -2,8 +2,12 @@ package org.example;
 
 import db.Database;
 import entities.Book;
+import entities.Client;
+import entities.Rent;
 import org.hibernate.Session;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Main {
@@ -11,10 +15,26 @@ public class Main {
     public static void main(String[] args) {
 
         //Session session = Database.getHibSesh();
-        //System.out.println("Insert isbn:");
+        //System.out.println("Insert the isbn of the book you would like to return?");
         //Book.returnBook(sc.nextInt());
+
+        /*Rent rent = new Rent ();
+        rent.setIssueDate(Timestamp.valueOf("2023-01-17 12:02:12"));
+        rent.setDueDate(Timestamp.valueOf("2023-01-31 12:02:12"));
+        rent.getClient_id();
+        rent.getIsbn();
+        rent.isReturned();
+        Rent.createNewRent(rent);
+
+         */
         //Book.checkOutBook(sc.nextInt());
-        Book.listBook();
+        //Book.listBook();
+        //Book.checkoutBookByTitle(sc.nextLine());
+        //Book.returnBookByTitle(sc.nextLine());
+
+
+
+
 
 
 

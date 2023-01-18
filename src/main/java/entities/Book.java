@@ -7,10 +7,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.print.attribute.standard.DateTimeAtCompleted;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -50,6 +50,8 @@ public class Book {
     }
 
     static Scanner sc = new Scanner(System.in);
+
+
 
     public static void addBook(Book book) {
         session.beginTransaction();
@@ -127,11 +129,17 @@ public class Book {
     // Users should be able to check out and return books by entering the ISBN of the book,
     // with the option to place a hold on a book if it is currently checked out.
     public static void checkOutBook(int isbn) {
+
         Session session = Database.getHibSesh();
-        System.out.println("Insert the isbn of the book you would like to issue?");
+
         try {
+            System.out.println("Insert the isbn of the book you would like to issue?");
+            isbn = sc.nextInt();
             session.beginTransaction();
             Book book = session.get(Book.class, isbn);
+            Rent rent = session.get(Rent.class, isbn);
+            System.out.println("Insert your id:");
+            int cust_id = sc.nextInt();
             if (book.isAvailable) {
                 System.out.println("Are you sure you want to check out this book? (yes/no)");
                 Scanner scanner = new Scanner(System.in);
@@ -141,7 +149,12 @@ public class Book {
                     int qty = scanner.nextInt();
                     book.setQtyInLibrary(book.getQtyInLibrary() - qty);
                     book.setAvailable(false);
+                    //Rent rent1 = new Rent();
+                    rent.setIssueDate(Timestamp.valueOf(Rent.issueDate()));
+                    rent.setDueDate(Timestamp.valueOf(Rent.dueDate()));
+
                     session.merge(book);
+                    session.merge(rent);
                     session.flush();
                     System.out.println("Book checked out successfully!");
                 } else {
@@ -180,6 +193,81 @@ public class Book {
                 }
             } else {
                 System.out.println("Book has not been checked out.");
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkoutBookByTitle(String title) {
+        Session session = Database.getHibSesh();
+
+
+        try {
+            session.beginTransaction();
+            List<Book> books = session.createQuery("from book where title = :title", Book.class)
+                    .setParameter("title", title)
+                    .getResultList();
+            if (books.size() > 0) {
+                Book book = books.get(0);
+                if (book.isAvailable) {
+                    System.out.println("Are you sure you want to checkout this book? (yes/no)");
+                    Scanner scanner = new Scanner(System.in);
+                    String confirm = scanner.nextLine();
+                    if (confirm.equalsIgnoreCase("yes")) {
+                        System.out.println("How many books you want checkout?");
+                        int qty = scanner.nextInt();
+                        book.setQtyInLibrary(book.getQtyInLibrary() - qty);
+                        book.setAvailable(true);
+                        session.merge(book);
+                        session.flush();
+                        System.out.println("Checkout was successfully!");
+                    } else {
+                        System.out.println("Checkout cancelled.");
+                    }
+                } else {
+                    System.out.println("Book has not been checked out.");
+                }
+            } else {
+                System.out.println("No book found with that title.");
+            }
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static void returnBookByTitle(String title) {
+        Session session = Database.getHibSesh();
+
+
+        try {
+            session.beginTransaction();
+            List<Book> books = session.createQuery("from book where title = :title", Book.class)
+                    .setParameter("title", title)
+                    .getResultList();
+            if (books.size() > 0) {
+                Book book = books.get(0);
+                if (book.isAvailable) {
+                    System.out.println("Are you sure you want to return this book? (yes/no)");
+                    Scanner scanner = new Scanner(System.in);
+                    String confirm = scanner.nextLine();
+                    if (confirm.equalsIgnoreCase("yes")) {
+                        System.out.println("How many books you want checkout?");
+                        int qty = scanner.nextInt();
+                        book.setQtyInLibrary(book.getQtyInLibrary() + qty);
+                        book.setAvailable(true);
+                        session.merge(book);
+                        session.flush();
+                        System.out.println("Book returned successfully!");
+                    } else {
+                        System.out.println("Return cancelled.");
+                    }
+                } else {
+                    System.out.println("Book has not been returned.");
+                }
+            } else {
+                System.out.println("No book found with that title.");
             }
             session.getTransaction().commit();
         } catch (Exception e) {
