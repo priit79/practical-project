@@ -16,16 +16,16 @@ public class Main {
         //Book.returnBook(sc.nextInt());
 
 
-/*
+
         Rent rent = new Rent();
         rent.setIssueDate(Timestamp.valueOf("2023-01-17 12:02:12"));
         rent.setDueDate(Timestamp.valueOf("2023-01-31 12:02:12"));
         rent.setClient_id(0);
         rent.isReturned();
         Rent.createNewRent(rent);
-*/
-        Rent rent = new Rent(Timestamp.valueOf("'2023-01-17 12:02:12'"), Timestamp.valueOf("'2023-01-17 12:02:12'"), 5, true, 4);
-        Rent.createNewRent(rent);
+
+        //Rent rent = new Rent(Timestamp.valueOf("'2023-01-17 12:02:12'"), Timestamp.valueOf("'2023-01-17 12:02:12'"), 5, true, 4);
+        //Rent.createNewRent(rent);
 
 
 
