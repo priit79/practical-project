@@ -1,4 +1,5 @@
 package entities;
+
 import db.Database;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,13 +8,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.*;
-
 import java.util.List;
 
-import static entities.Book.session;
 
-
-@Entity (name = "client")
+@Entity(name = "client")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,10 +27,17 @@ public class Client {
     @Column(name = "email")
     private String email;
 
-
     public Client(String name, String email) {
         this.name = name;
         this.email = email;
+    }
+
+    public int getClient_Id() {
+        return client_Id;
+    }
+
+    public void setClient_Id(int client_Id) {
+        this.client_Id = client_Id;
     }
 
     static Session session = Database.getHibSesh();
@@ -41,13 +46,13 @@ public class Client {
     public static void addClient(Client client) {
         session.beginTransaction();
         Transaction trans = session.getTransaction();
-        try{
+        try {
 
             session.persist(client);
             session.flush();
             trans.commit();
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             trans.rollback();
             e.printStackTrace();
         }
@@ -102,5 +107,3 @@ public class Client {
     }
 
 }
-
-

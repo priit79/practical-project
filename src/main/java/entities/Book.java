@@ -7,13 +7,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import javax.persistence.*;
-import javax.print.attribute.standard.DateTimeAtCompleted;
-import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.sql.Connection;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
+
 
 @Entity(name = "book")
 @Data
@@ -41,16 +39,15 @@ public class Book {
     @Column(name = "isAvailable")
     private boolean isAvailable;
 
-    public Book(String title, String category, int qtyInLibrary, Author authorId, boolean isAvailable) {
+    public Book(String title, String category, int qtyInLibrary, int authorId, boolean isAvailable) {
         this.title = title;
         this.category = category;
         this.qtyInLibrary = qtyInLibrary;
-        this.authorId = authorId;
+        this.authorId.setAuthor_id(authorId);
         this.isAvailable = isAvailable;
     }
 
     static Scanner sc = new Scanner(System.in);
-
 
 
     public static void addBook(Book book) {
@@ -237,6 +234,7 @@ public class Book {
             e.printStackTrace();
         }
     }
+
     public static void returnBookByTitle(String title) {
         Session session = Database.getHibSesh();
 
@@ -278,9 +276,3 @@ public class Book {
 
 
 //       session.update(qtyInLibrary - qty); - if the rent is made
-
-
-
-
-
-

@@ -1,4 +1,5 @@
 package entities;
+
 import db.Database;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,13 +23,6 @@ public class Rent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int rent_id;
 
-    @OneToOne
-    @JoinColumn(name = "isbn")
-    private Book isbn;
-
-    @Column(name="isbn", updatable=false,insertable=false) //Or correct column
-    private int isbn_id;
-
     @Column(name = "issue_date")
     private Timestamp issueDate;
 
@@ -39,22 +33,31 @@ public class Rent {
     @JoinColumn(name = "client_id")
     private Client client_id;
 
-    @Column(name="client_id", updatable=false,insertable=false) //Or correct column
-    private int clientId;
+    // @Column(name = "client_id", updatable = false, insertable = false) //Or correct column
+    //private int clientId;
 
-
-    @Column (name = "isReturned")
+    @Column(name = "isreturned")
     private boolean isReturned;
 
-    public Rent(Book isbn, int isbn_id, Timestamp issueDate, Timestamp dueDate, Client client_id, int clientId, boolean isReturned) {
-        this.isbn = isbn;
-        this.isbn_id = isbn_id;
+    @JoinColumn (name = "isbn")
+    private Book isbn;
+
+    public Rent(Timestamp issueDate, Timestamp dueDate, int client_id, boolean isReturned, int isbn) {
         this.issueDate = issueDate;
         this.dueDate = dueDate;
-        this.client_id = client_id;
-        this.clientId = clientId;
+        this.client_id.setClient_Id(client_id);
         this.isReturned = isReturned;
+        this.isbn.setIsbn(isbn);
     }
+
+    public int getClient_id(int client_id) {
+        return client_id;
+    }
+
+    public void setClient_id(int client_id) {
+        this.client_id.setClient_Id(client_id);
+    }
+
 
     static Session session = Database.getHibSesh();
 
@@ -66,7 +69,7 @@ public class Rent {
         SimpleDateFormat formattedDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 14);  // number of days to add
-        String dueDate= (String)(formattedDate.format(c.getTime()));
+        String dueDate = (String) (formattedDate.format(c.getTime()));
         System.out.println("Your due date is: " + dueDate);
 
 
@@ -77,7 +80,7 @@ public class Rent {
         //Date today = new Date();
         SimpleDateFormat formattedDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Calendar c = Calendar.getInstance();
-        String issueDate= (String)(formattedDate.format(c.getTime()));
+        String issueDate = (String) (formattedDate.format(c.getTime()));
         System.out.println("Your issue date is: " + issueDate);
 
 
