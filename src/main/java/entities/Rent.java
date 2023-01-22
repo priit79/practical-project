@@ -21,7 +21,11 @@ public class Rent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int rent_id;
+    private int r_id;
+
+    @OneToOne
+    @JoinColumn (name = "isbn")
+    private Book book = new Book();
 
     @Column(name = "issue_date")
     private Timestamp issueDate;
@@ -29,9 +33,10 @@ public class Rent {
     @Column(name = "due_date")
     private Timestamp dueDate;
 
+
     @OneToOne
     @JoinColumn(name = "client_id")
-    private Client client_id;
+    private Client client = new Client();
 
     // @Column(name = "client_id", updatable = false, insertable = false) //Or correct column
     //private int clientId;
@@ -39,24 +44,14 @@ public class Rent {
     @Column(name = "isreturned")
     private boolean isReturned;
 
-    @JoinColumn (name = "isbn")
-    private Book isbn;
-
-    public Rent(Timestamp issueDate, Timestamp dueDate, int client_id, boolean isReturned, int isbn) {
+    public Rent(int isbn, Timestamp issueDate, Timestamp dueDate, int c_id, boolean isReturned) {
+        this.book.setB_id(isbn);
         this.issueDate = issueDate;
         this.dueDate = dueDate;
-        this.client_id.setClient_Id(client_id);
+        this.client.setC_id(c_id);
         this.isReturned = isReturned;
-        this.isbn.setIsbn(isbn);
     }
 
-    public int getClient_id(int client_id) {
-        return client_id;
-    }
-
-    public void setClient_id(int client_id) {
-        this.client_id.setClient_Id(client_id);
-    }
 
 
     static Session session = Database.getHibSesh();
@@ -90,6 +85,7 @@ public class Rent {
     public static void createNewRent(Rent rent) {
         session.beginTransaction();
         Transaction trans = session.getTransaction();
+
         try {
             session.persist(rent);
             session.flush();
@@ -100,7 +96,9 @@ public class Rent {
         }
     }
 
-    public static void listRent() {
+    public static void listOfRentedBooks() {
+
+        System.out.println("Hello, wonderful admin! Here is the list of rented books: ");
         Session session = Database.getHibSesh();
 
         try {
@@ -114,5 +112,7 @@ public class Rent {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println("Thank you for viewing the list!");
     }
+
 }
